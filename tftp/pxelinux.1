@@ -1,0 +1,16 @@
+default vesamenu.c32
+timeout 300
+ONTIMEOUT local
+display boot.msg
+menu resolution 640 480
+menu clear
+menu title PXE boot menu
+ 
+LABEL local
+menu label Boot from ^local drive
+`localboot 0xffff
+ 
+LABEL Kickstart CentOS 7 x86_64
+MENU LABEL ^Kickstart CentOS 7 x86_64
+KERNEL vmlinuz
+APPEND initrd=initrd.img ks=http://<host IP>/kickstart.cfg ramdisk_size=131072 ip=dhcp lang=en_US keymap=us hostname=mypxetest
