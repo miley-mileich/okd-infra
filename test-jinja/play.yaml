@@ -13,16 +13,21 @@
     root
   remote_user:
     ansible
-
+  handlers: 
+    - name: restart nginx
+      systemd:
+        name: nginx
+        enabled: yes
+        state: restarted
   tasks:
     - name: Install Nginx, HAProxy, TFTPD, DHCPd
       yum:
         name: 
-      - nginx
-      - haproxy
-      - dhcp-server
-      - tftp-server
-      state: present
+        - nginx
+        - haproxy
+        - dhcp-server
+        - tftp-server
+        state: present
     - name: Render and copy dhcp.conf   
       template:
         src: templates/dhcpd.j2
@@ -44,12 +49,21 @@
         owner: nginx
         group: nginx
         mode: "u=rw,g=r,o=r"
-    - name: Render and copy nginx-http.conf
+      notify: restart nginx
+    - name: Create folders  
+      file:
+        path: '{{ item }}'
+        state: directory
+        mode: '0755'
+      loop:
+        - "/etc/nginx/sites-enabled"
+    - name: Render and copy nginx-http.conf          
       template:
         src: templates/nginx-http.j2
         dest: /etc/nginx/sites-enabled/nginx-http.conf
         owner: nginx
         group: nginx
         mode: "u=rw,g=r,o=r"
+      notify: restart nginx
 
 

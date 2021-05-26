@@ -1,15 +1,28 @@
-server {
-	listen 8080;
-    server_name {{ load_balancer.hostname }}
+# managed by ansible
+user nginx;
+worker_processes auto;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
 
-	location / {
-		root /usr/share/nginx/html;
-	}
-    location /haproxy {
-        proxy_pass http://localhost:9000;
-    }
-    error_page 500 502 503 504 /50x.html;
-    location = /50x.html {
-        root /usr/share/nginx/html;
-    }
+events {
+	worker_connections 768;
+}
+
+http {
+	sendfile on;
+	tcp_nopush on;
+	types_hash_max_size 2048;
+
+	include /etc/nginx/mime.types;
+	default_type application/octet-stream;
+
+	ssl_prefer_server_ciphers on;
+
+	access_log /var/log/nginx/access.log;
+	error_log /var/log/nginx/error.log;
+
+	gzip on;
+
+	include /etc/nginx/conf.d/*.conf;
+	include /etc/nginx/sites-enabled/*;
 }
