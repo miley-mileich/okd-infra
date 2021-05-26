@@ -1,0 +1,76 @@
+# Global settings
+#---------------------------------------------------------------------
+global
+    maxconn     20000
+    log         /dev/log local0 info
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    user        haproxy
+    group       haproxy
+    daemon
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+
+#---------------------------------------------------------------------
+# common defaults that all the 'listen' and 'backend' sections will
+# use if not designated in their block
+#---------------------------------------------------------------------
+defaults
+    mode                    http
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option http-server-close
+    option forwardfor       except 127.0.0.0/8
+    option                  redispatch
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          300s
+    timeout server          300s
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 20000
+
+listen stats
+    bind :9000
+    mode http
+    stats enable
+    stats uri /
+
+
+{% for end in cp_ends %}
+frontend {{ end.front_name }}
+    bind :{{ end.tcp_port }}
+    default_backend {{ end.back_name }}
+    mode tcp
+    option tcplog
+
+backend {{ end.back_name }}
+    balance source
+    mode tcp
+{% for host in hosts %}
+{% if host.control_plane %}
+    server      {{ host.hostname }} {{ host.ip_addr }}:{{ end.tcp_port }} check
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+{% for end in wrk_ends %}
+frontend {{ end.front_name }}
+    bind :{{ end.tcp_port }}
+    default_backend {{ end.back_name }}
+    mode tcp
+    option tcplog
+
+backend {{ end.back_name }}
+    balance source
+    mode tcp
+{% for host in hosts %}
+{% if not host.control_plane %}
+    server      {{ host.hostname }} {{ host.ip_addr }}:{{ end.tcp_port }} check
+{% endif %}
+{% endfor %}
+{% endfor %}

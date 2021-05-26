@@ -1,0 +1,9 @@
+ranges:
+- range1:
+  subnet: "172.19.74.0"
+  netmask: "255.255.255.224"
+  routers: "172.19.74.1"
+  search_zone: "psbank.ru"
+  name_servers: "192.168.88.1"
+  time_offset: "-180000"
+  ip_range: "172.19.74.10 172.19.74.36"

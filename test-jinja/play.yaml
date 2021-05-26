@@ -1,0 +1,55 @@
+---
+- name: play that sets a group to loop over
+  hosts: centos_servers
+  vars_files:
+    - vars/vars_hosts.yaml
+    - vars/vars_ranges.yaml
+    - vars/vars_balancer.yaml
+  become:
+    true
+  become_method:
+    su
+  become_user:
+    root
+  remote_user:
+    ansible
+
+  tasks:
+    - name: Install Nginx, HAProxy, TFTPD, DHCPd
+      yum:
+        name: 
+      - nginx
+      - haproxy
+      - dhcp-server
+      - tftp-server
+      state: present
+    - name: Render and copy dhcp.conf   
+      template:
+        src: templates/dhcpd.j2
+        dest: /etc/dhcp/dhcpd.conf
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+    - name: Render and copy haproxy.conf
+      template:
+        src: templates/haproxy.j2
+        dest: /etc/haproxy/haproxy.cfg
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+    - name: Render and copy nginx.conf
+      template:
+        src: templates/nginx.j2
+        dest: /etc/nginx/nginx.conf
+        owner: nginx
+        group: nginx
+        mode: "u=rw,g=r,o=r"
+    - name: Render and copy nginx-http.conf
+      template:
+        src: templates/nginx-http.j2
+        dest: /etc/nginx/sites-enabled/nginx-http.conf
+        owner: nginx
+        group: nginx
+        mode: "u=rw,g=r,o=r"
+
+

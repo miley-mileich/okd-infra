@@ -1,0 +1,19 @@
+{% for range in ranges %}
+subnet {{ range.subnet }} netmask {{ range.netmask }} {
+        option routers                  {{ range.routers }};
+        option subnet-mask              {{ range.netmask }};
+        option domain-search            {{ range.search_zone }};
+        option domain-name-servers      {{ range.name_servers }};
+        option time-offset              {{ range.time_offset }};     # Eastern Standard Time
+	range {{ range.ip_range }};
+}
+{% endfor %}
+
+{% for host in hosts %}
+host {{ host.node_role }} {
+   option host-name {{ host.hostname }};
+   hardware ethernet {{ host.mac_addr }};
+   fixed-address {{ host.ip_addr }};
+   filename "{{ host.pxe_filename }}";
+}
+{% endfor %}
