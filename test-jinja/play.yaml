@@ -28,10 +28,24 @@
         - dhcp-server
         - tftp-server
         state: present
-    - name: Render and copy pxelinux
+    - name: Render and copy pxelinux bts
       template:
         src: templates/pxelinux.bts
         dest: /var/lib/tftpboot/pxelinux.bts
+        owner: root
+        group: root 
+        mode: "u=rw,g=r,o=r"
+    - name: Render and copy pxelinux mst
+      template:
+        src: templates/pxelinux.mst
+        dest: /var/lib/tftpboot/pxelinux.mst
+        owner: root
+        group: root 
+        mode: "u=rw,g=r,o=r"
+    - name: Render and copy pxelinux wrk
+      template:
+        src: templates/pxelinux.bts
+        dest: /var/lib/tftpboot/pxelinux.wrk
         owner: root
         group: root 
         mode: "u=rw,g=r,o=r"
