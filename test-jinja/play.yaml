@@ -28,6 +28,13 @@
         - dhcp-server
         - tftp-server
         state: present
+    - name: Render and copy pxelinux
+      template:
+        src: templates/pxelinux.bts
+        dest: /var/lib/tftpboot/pxelinux.bts
+        owner: root
+        group: root 
+        mode: "u=rw,g=r,o=r"
     - name: Render and copy dhcp.conf   
       template:
         src: templates/dhcpd.j2
@@ -65,5 +72,16 @@
         group: nginx
         mode: "u=rw,g=r,o=r"
       notify: restart nginx
+    - name: Download FCOS images
+      get_url:
+        url: '{{ item.url }}'
+        dest: /usr/share/nginx/html/{{ item.dest }}
+        mode: '644'
+      loop:
+        - { url: "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210427.3.0/x86_64/fedora-coreos-34.20210427.3.0-live-kernel-x86_64", dest: kernel }
+        - { url: "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210427.3.0/x86_64/fedora-coreos-34.20210427.3.0-live-initramfs.x86_64.img", dest: initramfs }
+        - { url: "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210427.3.0/x86_64/fedora-coreos-34.20210427.3.0-live-rootfs.x86_64.img", dest: rootfs }
+
+
 
 

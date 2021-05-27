@@ -1,7 +1,7 @@
 # managed by ansible
 server {
 	listen 8080;
-    server_name {{ load_balancer[0].hostname }};
+    server_name {{ load_balancer[0].hostname }} default;
 
 	location / {
 		root /usr/share/nginx/html;
