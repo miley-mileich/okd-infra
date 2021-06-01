@@ -1,0 +1,14 @@
+---
+- name: Install DHCP server
+  yum:
+    name: dhcp-server
+    state: present
+  notify: start dhcpd
+- name: Render and copy dhcp.conf   
+  template:
+    src: templates/dhcpd.j2
+    dest: /etc/dhcp/dhcpd.conf
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  notify: restart dhcpd

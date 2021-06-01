@@ -1,0 +1,10 @@
+- name: start xinetd
+  systemd:
+    name: xinetd
+    enabled: yes
+    state: started
+- name: restart xinetd
+  systemd:
+    name: xinetd
+    enabled: yes
+    state: restarted

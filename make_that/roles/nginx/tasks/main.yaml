@@ -1,0 +1,38 @@
+---
+- name: Install nginx
+  yum:
+    name: nginx
+    state: present
+  notify: start nginx
+- name: Render and copy nginx.conf
+  template:
+    src: templates/nginx.j2
+    dest: /etc/nginx/nginx.conf
+    owner: nginx
+    group: nginx
+    mode: "u=rw,g=r,o=r"
+  notify: restart nginx
+- name: Create folders for nginx 
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: '0755'
+  loop:
+    - "/etc/nginx/sites-enabled"
+- name: Render and copy nginx-http.conf          
+  template:
+    src: templates/nginx-http.j2
+    dest: /etc/nginx/sites-enabled/nginx-http.conf
+    owner: nginx
+    group: nginx
+    mode: "u=rw,g=r,o=r"
+  notify: restart nginx
+- name: Download FCOS images
+  get_url:
+    url: '{{ item.url }}'
+    dest: /usr/share/nginx/html/{{ item.dest }}
+    mode: '644'
+  loop:
+    - { url: "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210427.3.0/x86_64/fedora-coreos-34.20210427.3.0-live-kernel-x86_64", dest: kernel }
+    - { url: "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210427.3.0/x86_64/fedora-coreos-34.20210427.3.0-live-initramfs.x86_64.img", dest: initramfs }
+    - { url: "https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/34.20210427.3.0/x86_64/fedora-coreos-34.20210427.3.0-live-rootfs.x86_64.img", dest: rootfs }

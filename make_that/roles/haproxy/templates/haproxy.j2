@@ -52,7 +52,7 @@ frontend {{ end.front_name }}
 backend {{ end.back_name }}
     balance source
     mode tcp
-{% for host in hosts %}
+{% for host in okd_hosts %}
 {% if host.control_plane %}
     server      {{ host.hostname }} {{ host.ip_addr }}:{{ end.tcp_port }} check
 {% endif %}

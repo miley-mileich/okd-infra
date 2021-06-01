@@ -1,3 +1,5 @@
+# переменные для haproxy.cfg
+# необходимо корректно указать только значения полей load_balancer
 cp_ends:
   - front_name: "okd4_k8s_api_fe"
     back_name: "okd4_k8s_api_be"
@@ -6,8 +8,8 @@ cp_ends:
     back_name: "okd4_machine_config_server_be"
     tcp_port: "22623"
 wrk_ends:
-  - front_name: "backend okd4_http_ingress_traffic_fe"
-    back_name: "backend okd4_http_ingress_traffic_be"
+  - front_name: "okd4_http_ingress_traffic_fe"
+    back_name: "okd4_http_ingress_traffic_be"
     tcp_port: "80"
   - front_name: "okd4_https_ingress_traffic_fe"
     back_name: "okd4_https_ingress_traffic_be"  

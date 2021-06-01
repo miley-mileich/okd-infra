@@ -1,0 +1,10 @@
+- name: start dhcpd
+  systemd:
+    name: dhcpd
+    enabled: yes
+    state: started
+- name: restart dhcpd
+  systemd:
+    name: dhcpd
+    enabled: yes
+    state: restarted

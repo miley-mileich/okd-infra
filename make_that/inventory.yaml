@@ -1,0 +1,3 @@
+centos_servers:
+  hosts:
+    172.19.74.11:

@@ -1,12 +1,22 @@
+ranges:
+- range1:
+  subnet: "172.19.74.0"
+  netmask: "255.255.255.224"
+  routers: "172.19.74.1"
+  search_zone: "psbank.ru"
+  name_servers: "192.168.88.1"
+  time_offset: "-180000"
+  ip_range: "172.19.74.10 172.19.74.36"
 # Переменный для шаблона DHCP и HAProxy
 # необходимо заполнять все значения для каждой ноды
-hosts:
+okd_hosts:
  - name: "bts1"
    node_role: "bootstrap"
    control_plane: true
    hostname: "bts1.psbank.com"
    ip_addr: "172.19.74.10"
    mac_addr: "08:00:27:b1:67:45"
+   mac_addr_pxe: "08-00-27-b1-67-45" 
    pxe_filename: "pxelinux.bts"
  - name: "mst1"
    node_role: "master1"
@@ -14,6 +24,7 @@ hosts:
    hostname: "mst1.psbank.com"
    ip_addr: "172.19.74.11"
    mac_addr: "08:00:27:b1:67:45"
+   mac_addr_pxe: "08-00-27-b1-67-45" 
    pxe_filename: "pxelinux.mst"
  - name: "mst2"
    node_role: "master2"
@@ -42,4 +53,4 @@ hosts:
    ip_addr: "172.19.74.22"
    hostname: "wrk2.psbank.com"
    mac_addr: "08:00:27:b1:67:45"
-   pxe_filename: "pxelinux.wrk"
+   pxe_filename: "pxelinux.wrk"  

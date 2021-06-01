@@ -1,0 +1,51 @@
+---
+- name: Install tftp, tftp-server, xinetd, syslinux-tftpboot
+  yum:
+    name: 
+    - tftp
+    - tftp-server
+    - xinetd
+    - syslinux-tftpboot
+    state: present
+  notify: start xinetd
+- name: Copy tftp configuration template
+  template:
+    src: templates/tftp.j2
+    dest: /etc/xinetd.d/tftp
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  notify: restart xinetd
+- name: Create folders for tftpboot 
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: '0755'
+  loop:
+    - "/tftpboot/pxelinux.cfg"
+- name: Copy pxelinux configs
+  template:
+    src: templates/tftp.j2
+    dest: /etc/xinetd.d/tftp
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+- name: Copy pxeconfigs
+  template:
+    src: templates/{{ item }}
+    dest: /tftpboot/pxelinux.cfg/{{ item }}
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  loop:
+    - "pxelinux.mst"
+    - "pxelinux.bts"
+    - "pxelinux.wrk"
+- name: Create a symbolic link to pxe with MAC
+  ansible.builtin.file:
+    src: /tftpboot/pxelinux.cfg/{{ item.pxe_filename }}
+    dest: /tftpboot/pxelinux.cfg/{{ item.mac_addr_pxe }}
+    owner: root
+    group: root
+    state: link
+  loop: "{{ okd_hosts }}"

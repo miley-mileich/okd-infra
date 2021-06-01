@@ -1,0 +1,10 @@
+- name: start haproxy
+  systemd:
+    name: haproxy
+    enabled: yes
+    state: started
+- name: restart haproxy
+  systemd:
+    name: haproxy
+    enabled: yes
+    state: restarted

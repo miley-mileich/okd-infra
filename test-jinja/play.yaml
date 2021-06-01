@@ -19,6 +19,16 @@
         name: nginx
         enabled: yes
         state: restarted
+    - name: restart haproxy
+      systemd:
+        name: haproxy
+        enabled: yes
+        state: restarted
+    - name: restart dhcpd
+      systemd:
+        name: dhcpd
+        enabled: yes
+        state: restarted
   tasks:
     - name: Install Nginx, HAProxy, TFTPD, DHCPd
       yum:
@@ -27,6 +37,7 @@
         - haproxy
         - dhcp-server
         - tftp-server
+        - xinetd
         state: present
     - name: Render and copy pxelinux bts
       template:
@@ -56,6 +67,7 @@
         owner: root
         group: root
         mode: "u=rw,g=r,o=r"
+      notify: restart dhcpd
     - name: Render and copy haproxy.conf
       template:
         src: templates/haproxy.j2
@@ -63,6 +75,7 @@
         owner: root
         group: root
         mode: "u=rw,g=r,o=r"
+      notify: restart haproxy
     - name: Render and copy nginx.conf
       template:
         src: templates/nginx.j2
