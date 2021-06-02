@@ -1,5 +1,7 @@
 ---
 - hosts: centos_servers
+  vars_files: 
+    - "environments/main.yaml"
   become:
     true
   become_method:
